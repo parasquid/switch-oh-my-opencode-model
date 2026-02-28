@@ -50,7 +50,54 @@
 #   curl -sL https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh
 #
 
-CONFIG_FILE="$HOME/.config/opencode/oh-my-opencode.json"
+CONFIG_FILE="${CONFIG_FILE:-$HOME/.config/opencode/oh-my-opencode.json}"
+
+ensure_config_exists() {
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "Config file not found. Creating default at $CONFIG_FILE..."
+        mkdir -p "$(dirname "$CONFIG_FILE")"
+        
+        python3 << PYTHON
+import json
+import os
+
+config = {
+    "agents": {
+        "sisyphus": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "oracle": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "explore": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "prometheus": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "metis": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "momus": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "atlas": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "hephaestus": {"model": "openai/gpt-5.3-codex", "fallback": ""},
+        "librarian": {"model": "opencode/gpt-5-nano", "fallback": ""},
+        "multimodal-looker": {"model": "openrouter/nvidia/nemotron-nano-12b-v2-vl:free", "fallback": ""}
+    },
+    "categories": {
+        "ultrabrain": {"model": "openai/gpt-5.3-codex", "fallback": "opencode/kimi-k2.5-free"},
+        "deep": {"model": "openai/gpt-5.3-codex", "fallback": "opencode/kimi-k2.5-free"},
+        "artistry": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "quick": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "writing": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "unspecified-low": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "unspecified-high": {"model": "opencode/kimi-k2.5-free", "fallback": ""},
+        "visual-engineering": {"model": "opencode/kimi-k2.5-free", "fallback": ""}
+    }
+}
+
+os.makedirs(os.path.dirname('$CONFIG_FILE'), exist_ok=True)
+with open('$CONFIG_FILE', 'w') as f:
+    json.dump(config, f, indent=2)
+    f.write('\n')
+
+print("Default config created!")
+PYTHON
+    fi
+}
+
+# Ensure config exists
+ensure_config_exists
 
 # Model mappings
 KIMI_ZEN="opencode/kimi-k2.5-free"
@@ -119,7 +166,6 @@ AVAILABLE MODELS:
 NOTE: In global mode, librarian and multimodal-looker are EXCLUDED (keep defaults).
       Use fine-grained mode to modify them.
 HELP
-    exit 0
 }
 
 resolve_model() {
@@ -187,11 +233,16 @@ get_model_by_number() {
        10) echo "$CODEX_53" ;;
        11) echo "$GPT_NANO" ;;
        12) echo "$NVIDIA_VL" ;;
-       *) echo "" ;;
+        *) echo "" ;;
     esac
 }
 
-# Check if config exists
+# Verify config exists (should be created by ensure_config_exists)
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Failed to create config file at $CONFIG_FILE"
+    exit 1
+fi
+
 if [ ! -f "$CONFIG_FILE" ]; then
     echo "Error: Config file not found at $CONFIG_FILE"
     exit 1
@@ -206,6 +257,7 @@ FALLBACK_MODEL=""
 # Handle --help
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     show_help
+    exit 0
 fi
 
 # Check for flag-based args (fine-grained mode)
@@ -237,6 +289,7 @@ if [[ "$1" == "--"* ]]; then
             -*)
                 echo "Error: Unknown option $1"
                 show_help
+                exit 1
                 ;;
             *)
                 if [ -z "$MODEL_ARG" ]; then
@@ -268,6 +321,7 @@ else
     elif [ -n "$1" ] || [ -n "$2" ]; then
         echo "Error: Global mode requires both orchestration and deep work models"
         show_help
+        exit 1
     fi
 fi
 
