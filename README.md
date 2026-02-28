@@ -4,11 +4,14 @@ A model switcher script for [Oh-My-OpenCode](https://github.com/code-yeongyu/oh-
 
 ## Features
 
-- **Two-model selection**: Choose separate models for orchestration (Sisyphus-type) and deep work (Hephaestus-type) tasks
-- **Interactive menu**: Easy selection if you don't want to use CLI arguments
+- **Two selection modes**: 
+  - **Global Mode**: Change orchestration + deep work models at once
+  - **Fine-grained Mode**: Set individual agents or categories
+- **Fallback support**: Set fallback models for agents and categories
+- **Interactive menu**: Easy selection if you don't want CLI arguments
 - **Multiple providers support**: Works with OpenCode Zen, OpenCode Go, Chutes, Modal, and OpenAI
 - **Automatic backup**: Creates timestamped backups before making changes
-- **Always-excluded agents**: librarian and multimodal-looker keep their defaults
+- **Always-excluded in global mode**: librarian and multimodal-looker keep their defaults (but can be changed in fine-grained mode)
 
 ## Installation
 
@@ -22,7 +25,7 @@ curl -sL https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model
 
 1. Download the script:
    ```bash
-   curl -sL https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh
+   curl -raw.githubusercontent.com/sL https://parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh
    ```
 
 2. Make it executable:
@@ -49,7 +52,13 @@ You'll be prompted to select:
 1. **Orchestration Model** - for Sisyphus-type agents
 2. **Deep Work Model** - for Hephaestus-type agents
 
-### Direct CLI Mode
+Press Enter to keep the current selection.
+
+---
+
+### Global Mode (Quick Switch)
+
+Change orchestration + deep work models at once:
 
 ```bash
 switch-model.sh <orchestration_model> <deep_work_model>
@@ -61,6 +70,59 @@ switch-model.sh kimi-zen codex-5.3
 switch-model.sh glm5-go codex-5.3
 switch-model.sh minimax-zen codex-5.3
 ```
+
+---
+
+### Fine-Grained Mode (Agent/Category Specific)
+
+Set specific agents or categories:
+
+```bash
+# Set specific agent
+switch-model.sh --agent sisyphus kimi-zen
+switch-model.sh --agent hephaestus codex-5.3
+
+# Set specific agent with fallback
+switch-model.sh --agent sisyphus kimi-zen --fallback glm5-zen
+
+# Set specific category
+switch-model.sh --category deep codex-5.3
+switch-model.sh --category ultrabrain codex-5.3
+
+# Set specific category with fallback
+switch-model.sh --category deep codex-5.3 --fallback kimi-zen
+
+# Set fallback for all agents
+switch-model.sh --agents-fallback kimi-zen
+
+# Set fallback for all categories
+switch-model.sh --categories-fallback kimi-zen
+```
+
+---
+
+### Help
+
+```bash
+switch-model.sh --help
+```
+
+## Available Models
+
+| Option | Model ID | Provider |
+|--------|----------|----------|
+| kimi-zen | opencode/kimi-k2.5-free | OpenCode Zen |
+| kimi-go | opencode-go/kimi-k2.5 | OpenCode Go |
+| kimi-chutes | chutes/moonshotai/Kimi-K2.5-TEE | Chutes |
+| glm5-modal | modal/zai-org/GLM-5-FP8 | Modal |
+| glm5-zen | opencode/glm-5-free | OpenCode Zen |
+| glm5-go | opencode-go/glm-5 | OpenCode Go |
+| minimax-zen | opencode/minimax-m2.5-free | OpenCode Zen |
+| minimax-chutes | chutes/MiniMaxAI/MiniMax-M2.5-TEE | Chutes |
+| minimax-go | opencode-go/minimax-m2.5 | OpenCode Go |
+| codex-5.3 | openai/gpt-5.3-codex | OpenAI |
+| gpt-5-nano | opencode/gpt-5-nano | OpenCode Zen |
+| nvidia-vl | openrouter/nvidia/nemotron-nano-12b-v2-vl:free | OpenRouter |
 
 ## Understanding the Two Selections
 
@@ -78,7 +140,7 @@ These agents handle coordination, communication, and delegation:
 | momus | Review/feedback |
 | atlas | Architecture |
 
-**Categories using this:**
+**Categories using orchestration model:**
 - `quick` - Fast tasks
 - `writing` - Documentation
 - `unspecified-low` - Low effort tasks
@@ -97,7 +159,7 @@ These agents handle intensive coding tasks:
 |-------|-------------|
 | hephaestus | Deep autonomous work |
 
-**Categories using this:**
+**Categories using deep work model:**
 - `ultrabrain` - Hard logic problems
 - `deep` - Thorough research
 
@@ -107,29 +169,14 @@ These agents handle intensive coding tasks:
 
 ---
 
-## Excluded Agents (Always Keep Defaults)
+## Excluded in Global Mode
 
-These agents are **not affected** by the switcher:
+These agents are **not affected** in global mode (but can be changed in fine-grained mode):
 
 | Agent | Default Model | Reason |
 |-------|--------------|--------|
 | librarian | gpt-5-nano | Large context for documentation |
-| multimodal-looker | OpenRouter nvidia | Vision tasks |
-
-## Available Models
-
-| Option | Model ID | Provider |
-|--------|----------|----------|
-| kimi-zen | opencode/kimi-k2.5-free | OpenCode Zen |
-| kimi-go | opencode-go/kimi-k2.5 | OpenCode Go |
-| kimi-chutes | chutes/moonshotai/Kimi-K2.5-TEE | Chutes |
-| glm5-modal | modal/zai-org/GLM-5-FP8 | Modal |
-| glm5-zen | opencode/glm-5-free | OpenCode Zen |
-| glm5-go | opencode-go/glm-5 | OpenCode Go |
-| minimax-zen | opencode/minimax-m2.5-free | OpenCode Zen |
-| minimax-chutes | chutes/MiniMaxAI/MiniMax-M2.5-TEE | Chutes |
-| minimax-go | opencode-go/minimax-m2.5 | OpenCode Go |
-| codex-5.3 | openai/gpt-5.3-codex | OpenAI |
+| multimodal-looker | nvidia-vl | Vision tasks |
 
 ## Updating
 
