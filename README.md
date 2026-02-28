@@ -193,10 +193,71 @@ cd ~/Documents/parasquid/switch-oh-my-opencode-model
 git pull origin main
 ```
 
+## Configuration
+
+### Config File Location
+
+By default, the script uses:
+```
+~/.config/opencode/oh-my-opencode.json
+```
+
+You can override this with the `CONFIG_FILE` environment variable:
+```bash
+CONFIG_FILE=/custom/path/config.json switch-model.sh kimi-zen codex-5.3
+```
+
+### Auto-Creation
+
+If the config file doesn't exist, the script automatically creates one with sensible defaults for all agents and categories. No manual setup required!
+
+---
+
+## Testing
+
+This project includes comprehensive bats-core unit tests.
+
+### Running Tests
+
+```bash
+# Run all tests
+bats tests/
+
+# Run specific test file
+bats tests/test_model_resolution.bats
+
+# Run with verbose output
+bats -v tests/
+```
+
+### Test Coverage
+
+- **Model Resolution**: 47 tests for all 12 models and aliases
+- **Argument Parsing**: 26 tests for CLI arguments and modes
+- **Config Operations**: 15 tests for backup and modifications
+
+### Installing bats-core
+
+```bash
+# macOS
+brew install bats-core
+
+# Linux (npm)
+npm install -g bats
+
+# Ubuntu/Debian
+sudo apt-get install bats
+```
+
+---
+
 ## Requirements
 
 - Bash shell
+- Bash shell
 - Python 3 (for JSON parsing)
+- Oh-My-OpenCode installed
+- bats-core (for running tests)
 - Oh-My-OpenCode installed and configured
 
 ## License
