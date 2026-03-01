@@ -53,6 +53,8 @@ You'll be prompted to select:
 1. **Orchestration Model** - for Sisyphus-type agents
 2. **Deep Work Model** - for Hephaestus-type agents
 
+The prompt now shows the current model name and model ID for each selection.
+
 Press Enter to keep the current selection.
 
 ---
