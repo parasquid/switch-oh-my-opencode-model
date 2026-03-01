@@ -9,7 +9,7 @@ A model switcher script for [Oh-My-OpenCode](https://github.com/code-yeongyu/oh-
   - **Fine-grained Mode**: Set individual agents or categories
 - **Fallback support**: Set fallback models for agents and categories
 - **Interactive menu**: Easy selection if you don't want CLI arguments
-- **Multiple providers support**: Works with OpenCode Zen, OpenCode Go, Modal, and OpenAI
+- **Multiple providers support**: Works with OpenCode Zen, OpenCode Go, Modal, OpenAI, and OpenRouter
 - **Automatic backup**: Creates timestamped backups before making changes
 - **Always-excluded in global mode**: librarian and multimodal-looker keep their defaults (but can be changed in fine-grained mode)
 
@@ -34,7 +34,7 @@ mkdir -p "$HOME/bin" && curl -fsSL "https://raw.githubusercontent.com/parasquid/
    chmod +x "$HOME/bin/switch-model.sh"
    ```
 
-3. Add to your PATH if ~/bin doesn't exist:
+3. Add `$HOME/bin` to your PATH if needed:
    ```bash
    export PATH="$HOME/bin:$PATH"  # Add to your ~/.bashrc or ~/.zshrc
    ```
@@ -254,12 +254,11 @@ sudo apt-get install bats
 
 ## Requirements
 
-- Bash shell
-- Bash shell
+- Bash
 - Python 3 (for JSON parsing)
-- Oh-My-OpenCode installed
-- bats-core (for running tests)
 - Oh-My-OpenCode installed and configured
+- `curl` (for install/update commands)
+- `bats-core` (optional, for running tests)
 
 ## Known Issues
 
@@ -267,19 +266,24 @@ sudo apt-get install bats
 
 **Symptom:** The UI shows duplicate entries for agents, such as "Prometheus" and "Prometheus (Plan Builder)".
 
-**Root Cause:** Commit df02c73 changed how agent names are displayed, retaining both the original keys and the display names.
+**Root cause:** OMO commit `df02c73` changed name remapping and retained both original keys and display names.
 
-**Workaround:** Pin to OMO v3.8.5 by specifying the exact version in your configuration:
+**Workaround:** Pin to OMO `v3.8.5` by specifying the exact version in your configuration:
 ```json
 "plugin": ["oh-my-opencode@3.8.5"]
 ```
 
 **Related Issues:**
-- GitHub Issue #2163
-- GitHub Issue #2180
+- https://github.com/code-yeongyu/oh-my-opencode/issues/2163
+- https://github.com/code-yeongyu/oh-my-opencode/issues/2180
+
+**Evidence:**
+- Upstream regression fix commit that retained both key and display-name mappings: https://github.com/code-yeongyu/oh-my-opencode/commit/df02c73a547b4cea22e49ab0428474e832f5297f
+- User reports demonstrating duplicate agent entries in the selector: https://github.com/code-yeongyu/oh-my-opencode/issues/2163 and https://github.com/code-yeongyu/oh-my-opencode/issues/2180
+
 ## License
 
-MIT
+GNU GPL v3.0
 
 ## Credits
 
