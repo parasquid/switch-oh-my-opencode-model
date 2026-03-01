@@ -51,6 +51,17 @@
 #
 
 CONFIG_FILE="${CONFIG_FILE:-$HOME/.config/opencode/oh-my-opencode.json}"
+# =============================================================================
+# AGENT AND CATEGORY DEFINITIONS - Single Source of Truth
+# =============================================================================
+readonly VALID_AGENTS="sisyphus oracle explore prometheus metis momus atlas hephaestus librarian multimodal-looker"
+readonly VALID_CATEGORIES="ultrabrain deep artistry quick writing unspecified-low unspecified-high visual-engineering"
+readonly ORCH_AGENTS="sisyphus oracle explore prometheus metis momus atlas"
+readonly DEEP_AGENTS="hephaestus"
+readonly GLOBAL_EXCLUDED_AGENTS="librarian multimodal-looker"
+readonly ORCH_CATEGORIES="quick writing unspecified-low unspecified-high visual-engineering"
+readonly DEEP_CATEGORIES="ultrabrain deep"
+
 
 ensure_config_exists() {
     if [ ! -f "$CONFIG_FILE" ]; then
@@ -113,12 +124,7 @@ CODEX_53="openai/gpt-5.3-codex"
 GPT_NANO="opencode/gpt-5-nano"
 NVIDIA_VL="openrouter/nvidia/nemotron-nano-12b-v2-vl:free"
 
-# Valid agents and categories
-VALID_AGENTS="sisyphus oracle explore prometheus metis momus atlas hephaestus librarian multimodal-looker"
-VALID_CATEGORIES="ultrabrain deep artistry quick writing unspecified-low unspecified-high visual-engineering"
-
-# Global mode defaults (excluded agents)
-GLOBAL_EXCLUDED_AGENTS="librarian multimodal-looker"
+# Validation uses consolidated readonly variables from top of script
 
 show_help() {
     cat << HELP
@@ -418,13 +424,13 @@ orchestration = '$ORCHESTRATION'
 deep_work = '$DEEP_WORK'
 
 # Agents for orchestration
-orch_agents = ['sisyphus', 'oracle', 'explore', 'prometheus', 'metis', 'momus', 'atlas']
+orch_agents = "$ORCH_AGENTS".split()
 for agent in orch_agents:
     if agent in config['agents']:
         config['agents'][agent]['model'] = orchestration
 
 # Categories for orchestration
-orch_cats = ['quick', 'writing', 'unspecified-low', 'unspecified-high', 'visual-engineering']
+orch_cats = "$ORCH_CATEGORIES".split()
 for cat in orch_cats:
     if cat in config['categories']:
         config['categories'][cat]['model'] = orchestration
@@ -433,7 +439,7 @@ for cat in orch_cats:
 config['agents']['hephaestus']['model'] = deep_work
 
 # Categories for deep work
-deep_cats = ['ultrabrain', 'deep']
+deep_cats = "$DEEP_CATEGORIES".split()
 for cat in deep_cats:
     if cat in config['categories']:
         config['categories'][cat]['model'] = deep_work

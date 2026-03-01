@@ -16,7 +16,7 @@ super_setup() {
     export CONFIG_FILE="$TEST_TMPDIR/oh-my-opencode.json"
     
     # Detect CI mode
-    export CI_MODE="${CI:-false}
+    export CI_MODE="${CI:-false}"
     if [ "$CI_MODE" = "true" ] || [ -n "$GITHUB_ACTIONS" ]; then
         export CI_MODE="true"
     fi

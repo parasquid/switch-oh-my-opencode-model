@@ -260,6 +260,22 @@ sudo apt-get install bats
 - bats-core (for running tests)
 - Oh-My-OpenCode installed and configured
 
+## Known Issues
+
+### OMO v3.9.0 Duplicate Agent Display Bug
+
+**Symptom:** The UI shows duplicate entries for agents, such as "Prometheus" and "Prometheus (Plan Builder)".
+
+**Root Cause:** Commit df02c73 changed how agent names are displayed, retaining both the original keys and the display names.
+
+**Workaround:** Pin to OMO v3.8.5 by specifying the exact version in your configuration:
+```json
+"plugin": ["oh-my-opencode@3.8.5"]
+```
+
+**Related Issues:**
+- GitHub Issue #2163
+- GitHub Issue #2180
 ## License
 
 MIT
