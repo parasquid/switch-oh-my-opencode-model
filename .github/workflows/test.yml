@@ -30,12 +30,9 @@ jobs:
         timeout-minutes: 2
         env:
           CI: true
-        run: bats tests/test_arguments.bats
-        timeout-minutes: 2
         run: |
           # Run only non-interactive tests
           bats tests/test_arguments.bats --filter "!interactive"
-
       - name: Test script execution
         timeout-minutes: 1
         run: |
