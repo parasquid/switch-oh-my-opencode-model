@@ -14,6 +14,12 @@ super_setup() {
     mkdir -p "$TEST_TMPDIR"
     export TEST_CONFIG="$TEST_TMPDIR/test-config.json"
     export CONFIG_FILE="$TEST_TMPDIR/oh-my-opencode.json"
+    
+    # Detect CI mode
+    export CI_MODE="${CI:-false}
+    if [ "$CI_MODE" = "true" ] || [ -n "$GITHUB_ACTIONS" ]; then
+        export CI_MODE="true"
+    fi
 }
 
 # Load bats-core assertions
@@ -24,6 +30,36 @@ setup() {
 teardown() {
     # Clean up test files
     rm -rf "$TEST_TMPDIR"
+}
+
+# Check if running in CI mode
+is_ci_mode() {
+    [ "$CI_MODE" = "true" ]
+}
+
+# Skip test if in CI mode (for interactive tests)
+skip_if_ci() {
+    if is_ci_mode; then
+        skip "Skipping interactive test in CI mode"
+    fi
+}
+
+# Get a random valid model number (1-12)
+get_random_model_number() {
+    echo "$(( (RANDOM % 12) + 1 ))"
+}
+
+# Provide automated input for interactive mode
+# Usage: auto_input [model_number] [fallback_number]
+auto_input() {
+    local model_num="${1:-1}"  # Default to 1 (kimi-zen)
+    local fallback_num="${2:-}"  # Empty means skip fallback
+    
+    if [ -n "$fallback_num" ]; then
+        echo -e "${model_num}\n${fallback_num}"
+    else
+        echo "${model_num}"
+    fi
 }
 
 # Create a test config file with known state

@@ -26,7 +26,11 @@ jobs:
         timeout-minutes: 2
         run: bats tests/test_config_operations.bats
 
-      - name: Run argument tests (non-interactive)
+      - name: Run argument tests
+        timeout-minutes: 2
+        env:
+          CI: true
+        run: bats tests/test_arguments.bats
         timeout-minutes: 2
         run: |
           # Run only non-interactive tests
