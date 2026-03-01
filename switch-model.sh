@@ -7,12 +7,10 @@
 # =============================================================================
 #   kimi-zen           - opencode/kimi-k2.5-free
 #   kimi-go            - opencode-go/kimi-k2.5
-#   kimi-chutes        - chutes/moonshotai/Kimi-K2.5-TEE
 #   glm5-modal         - modal/zai-org/GLM-5-FP8
 #   glm5-zen           - opencode/glm-5-free
 #   glm5-go            - opencode-go/glm-5
 #   minimax-zen        - opencode/minimax-m2.5-free
-#   minimax-chutes     - chutes/MiniMaxAI/MiniMax-M2.5-TEE
 #   minimax-go         - opencode-go/minimax-m2.5
 #   codex-5.3          - openai/gpt-5.3-codex
 #   gpt-5-nano         - opencode/gpt-5-nano
@@ -43,11 +41,14 @@
 #
 # =============================================================================
 # INSTALL:
-#   curl -sL https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh
-#   chmod +x ~/bin/switch-model.sh
+#   mkdir -p "$HOME/bin"
+#   curl -fsSL "https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh" -o "$HOME/bin/switch-model.sh"
+#   chmod +x "$HOME/bin/switch-model.sh"
 #
 # UPDATE:
-#   curl -sL https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh
+#   mkdir -p "$HOME/bin"
+#   curl -fsSL "https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh" -o "$HOME/bin/switch-model.sh"
+#   chmod +x "$HOME/bin/switch-model.sh"
 #
 
 CONFIG_FILE="${CONFIG_FILE:-$HOME/.config/opencode/oh-my-opencode.json}"
@@ -113,12 +114,10 @@ ensure_config_exists
 # Model mappings
 KIMI_ZEN="opencode/kimi-k2.5-free"
 KIMI_GO="opencode-go/kimi-k2.5"
-KIMI_CHUTES="chutes/moonshotai/Kimi-K2.5-TEE"
 GLM5_MODAL="modal/zai-org/GLM-5-FP8"
 GLM5_ZEN="opencode/glm-5-free"
 GLM5_GO="opencode-go/glm-5"
 MINIMAX_ZEN="opencode/minimax-m2.5-free"
-MINIMAX_CHUTES="chutes/MiniMaxAI/MiniMax-M2.5-TEE"
 MINIMAX_GO="opencode-go/minimax-m2.5"
 CODEX_53="openai/gpt-5.3-codex"
 GPT_NANO="opencode/gpt-5-nano"
@@ -166,8 +165,8 @@ AVAILABLE AGENTS: $VALID_AGENTS
 AVAILABLE CATEGORIES: $VALID_CATEGORIES
 
 AVAILABLE MODELS:
-  kimi-zen, kimi-go, kimi-chutes, glm5-modal, glm5-zen, glm5-go,
-  minimax-zen, minimax-chutes, minimax-go, codex-5.3, gpt-5-nano, nvidia-vl
+  kimi-zen, kimi-go, glm5-modal, glm5-zen, glm5-go,
+  minimax-zen, minimax-go, codex-5.3, gpt-5-nano, nvidia-vl
 
 NOTE: In global mode, librarian and multimodal-looker are EXCLUDED (keep defaults).
       Use fine-grained mode to modify them.
@@ -178,12 +177,10 @@ resolve_model() {
     case "$1" in
         kimi-zen|kimi|kimi-k2.5|kimi-k2.5-free)     echo "$KIMI_ZEN" ;;
         kimi-go|kimi-k2.5-go)                        echo "$KIMI_GO" ;;
-        kimi-chutes|kimi-chutes-k2.5)                echo "$KIMI_CHUTES" ;;
         glm5-modal|glm-5-modal|glm5)                echo "$GLM5_MODAL" ;;
         glm5-zen|glm-5-zen)                         echo "$GLM5_ZEN" ;;
         glm5-go|glm-5-go)                           echo "$GLM5_GO" ;;
         minimax-zen|minimax|minimax-m2.5|minimax-m2.5-free) echo "$MINIMAX_ZEN" ;;
-        minimax-chutes|minimax-m2.5-chutes)          echo "$MINIMAX_CHUTES" ;;
         minimax-go|minimax-m2.5-go)                  echo "$MINIMAX_GO" ;;
         codex-5.3|codex|gpt-5.3-codex)              echo "$CODEX_53" ;;
         gpt-5-nano|gpt-nano|nano)                   echo "$GPT_NANO" ;;
@@ -196,12 +193,10 @@ get_model_name() {
     case "$1" in
         "$KIMI_ZEN") echo "kimi-zen" ;;
         "$KIMI_GO") echo "kimi-go" ;;
-        "$KIMI_CHUTES") echo "kimi-chutes" ;;
         "$GLM5_MODAL") echo "glm5-modal" ;;
         "$GLM5_ZEN") echo "glm5-zen" ;;
         "$GLM5_GO") echo "glm5-go" ;;
         "$MINIMAX_ZEN") echo "minimax-zen" ;;
-        "$MINIMAX_CHUTES") echo "minimax-chutes" ;;
         "$MINIMAX_GO") echo "minimax-go" ;;
         "$CODEX_53") echo "codex-5.3" ;;
         "$GPT_NANO") echo "gpt-5-nano" ;;
@@ -213,32 +208,28 @@ get_model_name() {
 print_model_menu() {
     echo "  1) kimi-zen        - $KIMI_ZEN"
     echo "  2) kimi-go         - $KIMI_GO"
-    echo "  3) kimi-chutes     - $KIMI_CHUTES"
-    echo "  4) glm5-modal      - $GLM5_MODAL"
-    echo "  5) glm5-zen        - $GLM5_ZEN"
-    echo "  6) glm5-go         - $GLM5_GO"
-    echo "  7) minimax-zen     - $MINIMAX_ZEN"
-    echo "  8) minimax-chutes  - $MINIMAX_CHUTES"
-    echo "  9) minimax-go      - $MINIMAX_GO"
-    echo " 10) codex-5.3      - $CODEX_53"
-    echo " 11) gpt-5-nano     - $GPT_NANO"
-    echo " 12) nvidia-vl       - $NVIDIA_VL"
+    echo "  3) glm5-modal      - $GLM5_MODAL"
+    echo "  4) glm5-zen        - $GLM5_ZEN"
+    echo "  5) glm5-go         - $GLM5_GO"
+    echo "  6) minimax-zen     - $MINIMAX_ZEN"
+    echo "  7) minimax-go      - $MINIMAX_GO"
+    echo "  8) codex-5.3       - $CODEX_53"
+    echo "  9) gpt-5-nano      - $GPT_NANO"
+    echo " 10) nvidia-vl       - $NVIDIA_VL"
 }
 
 get_model_by_number() {
     case "$1" in
         1) echo "$KIMI_ZEN" ;;
         2) echo "$KIMI_GO" ;;
-        3) echo "$KIMI_CHUTES" ;;
-        4) echo "$GLM5_MODAL" ;;
-        5) echo "$GLM5_ZEN" ;;
-        6) echo "$GLM5_GO" ;;
-        7) echo "$MINIMAX_ZEN" ;;
-        8) echo "$MINIMAX_CHUTES" ;;
-        9) echo "$MINIMAX_GO" ;;
-       10) echo "$CODEX_53" ;;
-       11) echo "$GPT_NANO" ;;
-       12) echo "$NVIDIA_VL" ;;
+        3) echo "$GLM5_MODAL" ;;
+        4) echo "$GLM5_ZEN" ;;
+        5) echo "$GLM5_GO" ;;
+        6) echo "$MINIMAX_ZEN" ;;
+        7) echo "$MINIMAX_GO" ;;
+        8) echo "$CODEX_53" ;;
+        9) echo "$GPT_NANO" ;;
+       10) echo "$NVIDIA_VL" ;;
         *) echo "" ;;
     esac
 }
@@ -362,7 +353,7 @@ if [ "$MODE" = "global" ] || [ -z "$MODE" ]; then
         echo ""
         print_model_menu
         echo ""
-        echo -n "Select orchestration model (1-12) [default: current]: "
+        echo -n "Select orchestration model (1-10) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -387,7 +378,7 @@ with open('$CONFIG_FILE') as f:
         echo ""
         print_model_menu
         echo ""
-        echo -n "Select deep work model (1-12) [default: current]: "
+        echo -n "Select deep work model (1-10) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -483,7 +474,7 @@ with open('$CONFIG_FILE') as f:
         echo "Current: $current"
         print_model_menu
         echo ""
-        echo -n "Select model (1-12) [default: current]: "
+        echo -n "Select model (1-10) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -499,7 +490,7 @@ with open('$CONFIG_FILE') as f:
             FALLBACK=$(resolve_model "$FALLBACK_MODEL")
         else
             echo ""
-            echo -n "Set fallback model? (1-12) or enter to skip: "
+            echo -n "Set fallback model? (1-10) or enter to skip: "
             read -r fb_choice
             if [ -n "$fb_choice" ]; then
                 FALLBACK=$(get_model_by_number "$fb_choice")
@@ -558,7 +549,7 @@ with open('$CONFIG_FILE') as f:
         echo "Current: $current"
         print_model_menu
         echo ""
-        echo -n "Select model (1-12) [default: current]: "
+        echo -n "Select model (1-10) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -574,7 +565,7 @@ with open('$CONFIG_FILE') as f:
             FALLBACK=$(resolve_model "$FALLBACK_MODEL")
         else
             echo ""
-            echo -n "Set fallback model? (1-12) or enter to skip: "
+            echo -n "Set fallback model? (1-10) or enter to skip: "
             read -r fb_choice
             if [ -n "$fb_choice" ]; then
                 FALLBACK=$(get_model_by_number "$fb_choice")

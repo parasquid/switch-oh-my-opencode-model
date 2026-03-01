@@ -9,7 +9,7 @@ A model switcher script for [Oh-My-OpenCode](https://github.com/code-yeongyu/oh-
   - **Fine-grained Mode**: Set individual agents or categories
 - **Fallback support**: Set fallback models for agents and categories
 - **Interactive menu**: Easy selection if you don't want CLI arguments
-- **Multiple providers support**: Works with OpenCode Zen, OpenCode Go, Chutes, Modal, and OpenAI
+- **Multiple providers support**: Works with OpenCode Zen, OpenCode Go, Modal, and OpenAI
 - **Automatic backup**: Creates timestamped backups before making changes
 - **Always-excluded in global mode**: librarian and multimodal-looker keep their defaults (but can be changed in fine-grained mode)
 
@@ -18,19 +18,20 @@ A model switcher script for [Oh-My-OpenCode](https://github.com/code-yeongyu/oh-
 ### One-liner (recommended)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh && chmod +x ~/bin/switch-model.sh
+mkdir -p "$HOME/bin" && curl -fsSL "https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh" -o "$HOME/bin/switch-model.sh" && chmod +x "$HOME/bin/switch-model.sh"
 ```
 
 ### Manual
 
 1. Download the script:
    ```bash
-   curl -raw.githubusercontent.com/sL https://parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh
+   mkdir -p "$HOME/bin"
+   curl -fsSL "https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh" -o "$HOME/bin/switch-model.sh"
    ```
 
 2. Make it executable:
    ```bash
-   chmod +x ~/bin/switch-model.sh
+   chmod +x "$HOME/bin/switch-model.sh"
    ```
 
 3. Add to your PATH if ~/bin doesn't exist:
@@ -113,12 +114,10 @@ switch-model.sh --help
 |--------|----------|----------|
 | kimi-zen | opencode/kimi-k2.5-free | OpenCode Zen |
 | kimi-go | opencode-go/kimi-k2.5 | OpenCode Go |
-| kimi-chutes | chutes/moonshotai/Kimi-K2.5-TEE | Chutes |
 | glm5-modal | modal/zai-org/GLM-5-FP8 | Modal |
 | glm5-zen | opencode/glm-5-free | OpenCode Zen |
 | glm5-go | opencode-go/glm-5 | OpenCode Go |
 | minimax-zen | opencode/minimax-m2.5-free | OpenCode Zen |
-| minimax-chutes | chutes/MiniMaxAI/MiniMax-M2.5-TEE | Chutes |
 | minimax-go | opencode-go/minimax-m2.5 | OpenCode Go |
 | codex-5.3 | openai/gpt-5.3-codex | OpenAI |
 | gpt-5-nano | opencode/gpt-5-nano | OpenCode Zen |
@@ -183,7 +182,7 @@ These agents are **not affected** in global mode (but can be changed in fine-gra
 To update to the latest version:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh -o ~/bin/switch-model.sh
+mkdir -p "$HOME/bin" && curl -fsSL "https://raw.githubusercontent.com/parasquid/switch-oh-my-opencode-model/main/switch-model.sh" -o "$HOME/bin/switch-model.sh" && chmod +x "$HOME/bin/switch-model.sh"
 ```
 
 Or if you cloned the repo:
@@ -232,7 +231,7 @@ bats -v tests/
 
 ### Test Coverage
 
-- **Model Resolution**: 47 tests for all 12 models and aliases
+- **Model Resolution**: 41 tests for all 10 models and aliases
 - **Argument Parsing**: 26 tests for CLI arguments and modes
 - **Config Operations**: 15 tests for backup and modifications
 

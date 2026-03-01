@@ -39,11 +39,6 @@ setup() {
     [[ "$result" == "opencode-go/kimi-k2.5" ]]
 }
 
-@test "resolve_model: kimi-chutes resolves correctly" {
-    result=$(resolve_model "kimi-chutes")
-    [[ "$result" == "chutes/moonshotai/Kimi-K2.5-TEE" ]]
-}
-
 @test "resolve_model: glm5-modal resolves correctly" {
     result=$(resolve_model "glm5-modal")
     [[ "$result" == "modal/zai-org/GLM-5-FP8" ]]
@@ -72,11 +67,6 @@ setup() {
 @test "resolve_model: minimax alias resolves correctly" {
     result=$(resolve_model "minimax")
     [[ "$result" == "opencode/minimax-m2.5-free" ]]
-}
-
-@test "resolve_model: minimax-chutes resolves correctly" {
-    result=$(resolve_model "minimax-chutes")
-    [[ "$result" == "chutes/MiniMaxAI/MiniMax-M2.5-TEE" ]]
 }
 
 @test "resolve_model: minimax-go resolves correctly" {
@@ -128,11 +118,6 @@ setup() {
     [[ "$result" == "kimi-go" ]]
 }
 
-@test "get_model_name: chutes/moonshotai/Kimi-K2.5-TEE maps to kimi-chutes" {
-    result=$(get_model_name "chutes/moonshotai/Kimi-K2.5-TEE")
-    [[ "$result" == "kimi-chutes" ]]
-}
-
 @test "get_model_name: modal/zai-org/GLM-5-FP8 maps to glm5-modal" {
     result=$(get_model_name "modal/zai-org/GLM-5-FP8")
     [[ "$result" == "glm5-modal" ]]
@@ -151,11 +136,6 @@ setup() {
 @test "get_model_name: opencode/minimax-m2.5-free maps to minimax-zen" {
     result=$(get_model_name "opencode/minimax-m2.5-free")
     [[ "$result" == "minimax-zen" ]]
-}
-
-@test "get_model_name: chutes/MiniMaxAI/MiniMax-M2.5-TEE maps to minimax-chutes" {
-    result=$(get_model_name "chutes/MiniMaxAI/MiniMax-M2.5-TEE")
-    [[ "$result" == "minimax-chutes" ]]
 }
 
 @test "get_model_name: opencode-go/minimax-m2.5 maps to minimax-go" {
@@ -197,53 +177,43 @@ setup() {
     [[ "$result" == "opencode-go/kimi-k2.5" ]]
 }
 
-@test "get_model_by_number: 3 returns kimi-chutes" {
+@test "get_model_by_number: 3 returns glm5-modal" {
     result=$(get_model_by_number "3")
-    [[ "$result" == "chutes/moonshotai/Kimi-K2.5-TEE" ]]
-}
-
-@test "get_model_by_number: 4 returns glm5-modal" {
-    result=$(get_model_by_number "4")
     [[ "$result" == "modal/zai-org/GLM-5-FP8" ]]
 }
 
-@test "get_model_by_number: 5 returns glm5-zen" {
-    result=$(get_model_by_number "5")
+@test "get_model_by_number: 4 returns glm5-zen" {
+    result=$(get_model_by_number "4")
     [[ "$result" == "opencode/glm-5-free" ]]
 }
 
-@test "get_model_by_number: 6 returns glm5-go" {
-    result=$(get_model_by_number "6")
+@test "get_model_by_number: 5 returns glm5-go" {
+    result=$(get_model_by_number "5")
     [[ "$result" == "opencode-go/glm-5" ]]
 }
 
-@test "get_model_by_number: 7 returns minimax-zen" {
-    result=$(get_model_by_number "7")
+@test "get_model_by_number: 6 returns minimax-zen" {
+    result=$(get_model_by_number "6")
     [[ "$result" == "opencode/minimax-m2.5-free" ]]
 }
 
-@test "get_model_by_number: 8 returns minimax-chutes" {
-    result=$(get_model_by_number "8")
-    [[ "$result" == "chutes/MiniMaxAI/MiniMax-M2.5-TEE" ]]
-}
-
-@test "get_model_by_number: 9 returns minimax-go" {
-    result=$(get_model_by_number "9")
+@test "get_model_by_number: 7 returns minimax-go" {
+    result=$(get_model_by_number "7")
     [[ "$result" == "opencode-go/minimax-m2.5" ]]
 }
 
-@test "get_model_by_number: 10 returns codex-5.3" {
-    result=$(get_model_by_number "10")
+@test "get_model_by_number: 8 returns codex-5.3" {
+    result=$(get_model_by_number "8")
     [[ "$result" == "openai/gpt-5.3-codex" ]]
 }
 
-@test "get_model_by_number: 11 returns gpt-5-nano" {
-    result=$(get_model_by_number "11")
+@test "get_model_by_number: 9 returns gpt-5-nano" {
+    result=$(get_model_by_number "9")
     [[ "$result" == "opencode/gpt-5-nano" ]]
 }
 
-@test "get_model_by_number: 12 returns nvidia-vl" {
-    result=$(get_model_by_number "12")
+@test "get_model_by_number: 10 returns nvidia-vl" {
+    result=$(get_model_by_number "10")
     [[ "$result" == "openrouter/nvidia/nemotron-nano-12b-v2-vl:free" ]]
 }
 
@@ -252,8 +222,8 @@ setup() {
     [[ "$result" == "" ]]
 }
 
-@test "get_model_by_number: 13 returns empty (invalid)" {
-    result=$(get_model_by_number "13")
+@test "get_model_by_number: 11 returns empty (invalid)" {
+    result=$(get_model_by_number "11")
     [[ "$result" == "" ]]
 }
 

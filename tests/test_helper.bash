@@ -44,9 +44,9 @@ skip_if_ci() {
     fi
 }
 
-# Get a random valid model number (1-12)
+# Get a random valid model number (1-10)
 get_random_model_number() {
-    echo "$(( (RANDOM % 12) + 1 ))"
+    echo "$(( (RANDOM % 10) + 1 ))"
 }
 
 # Provide automated input for interactive mode
