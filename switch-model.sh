@@ -351,6 +351,14 @@ if [ "$MODE" = "global" ] || [ -z "$MODE" ]; then
         echo "Categories: quick, writing, unspecified-low, unspecified-high, visual-engineering"
         echo "NOTE: librarian, multimodal-looker are EXCLUDED (use fine-grained mode)"
         echo ""
+        CURRENT_ORCHESTRATION=$(python3 -c "
+import json
+with open('$CONFIG_FILE') as f:
+    print(json.load(f)['agents'].get('sisyphus', {}).get('model', ''))
+")
+        CURRENT_ORCHESTRATION_NAME=$(get_model_name "$CURRENT_ORCHESTRATION")
+        echo "Current: $CURRENT_ORCHESTRATION_NAME ($CURRENT_ORCHESTRATION)"
+        echo ""
         print_model_menu
         echo ""
         echo -n "Select orchestration model (1-10) [default: current]: "
@@ -360,13 +368,8 @@ if [ "$MODE" = "global" ] || [ -z "$MODE" ]; then
             ORCHESTRATION=$(get_model_by_number "$choice")
             ORCHESTRATION_NAME=$(get_model_name "$ORCHESTRATION")
         else
-            # Keep current - need to read from config
-            ORCHESTRATION=$(python3 -c "
-import json
-with open('$CONFIG_FILE') as f:
-    print(json.load(f)['agents'].get('sisyphus', {}).get('model', ''))
-")
-            ORCHESTRATION_NAME=$(get_model_name "$ORCHESTRATION")
+            ORCHESTRATION="$CURRENT_ORCHESTRATION"
+            ORCHESTRATION_NAME="$CURRENT_ORCHESTRATION_NAME"
         fi
         
         echo ""
@@ -375,6 +378,14 @@ with open('$CONFIG_FILE') as f:
         echo "======================================================================"
         echo "For: hephaestus"
         echo "Categories: ultrabrain, deep"
+        echo ""
+        CURRENT_DEEP_WORK=$(python3 -c "
+import json
+with open('$CONFIG_FILE') as f:
+    print(json.load(f)['agents'].get('hephaestus', {}).get('model', ''))
+")
+        CURRENT_DEEP_NAME=$(get_model_name "$CURRENT_DEEP_WORK")
+        echo "Current: $CURRENT_DEEP_NAME ($CURRENT_DEEP_WORK)"
         echo ""
         print_model_menu
         echo ""
@@ -385,12 +396,8 @@ with open('$CONFIG_FILE') as f:
             DEEP_WORK=$(get_model_by_number "$choice")
             DEEP_NAME=$(get_model_name "$DEEP_WORK")
         else
-            DEEP_WORK=$(python3 -c "
-import json
-with open('$CONFIG_FILE') as f:
-    print(json.load(f)['agents'].get('hephaestus', {}).get('model', ''))
-")
-            DEEP_NAME=$(get_model_name "$DEEP_WORK")
+            DEEP_WORK="$CURRENT_DEEP_WORK"
+            DEEP_NAME="$CURRENT_DEEP_NAME"
         fi
         
         echo ""
