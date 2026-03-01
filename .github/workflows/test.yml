@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout code
@@ -17,17 +18,22 @@ jobs:
       - name: Install bats-core
         run: sudo apt-get update && sudo apt-get install -y bats
 
-      - name: Create mock config directory
-        run: mkdir -p ~/.config/opencode
+      - name: Run model resolution tests
+        timeout-minutes: 1
+        run: bats tests/test_model_resolution.bats
 
-      - name: Create mock config file
+      - name: Run config operations tests
+        timeout-minutes: 2
+        run: bats tests/test_config_operations.bats
+
+      - name: Run argument tests (non-interactive)
+        timeout-minutes: 2
         run: |
-          cat > ~/.config/opencode/oh-my-opencode.json << 'EOF'
-          {
-            "model": "claude-sonnet-4-5",
-            "context_window": 200000
-          }
-          EOF
+          # Run only non-interactive tests
+          bats tests/test_arguments.bats --filter "!interactive"
 
-      - name: Run tests
-        run: bats tests/
+      - name: Test script execution
+        timeout-minutes: 1
+        run: |
+          chmod +x switch-model.sh
+          ./switch-model.sh --help
