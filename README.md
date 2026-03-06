@@ -55,6 +55,8 @@ You'll be prompted to select:
 
 The prompt now shows the current model name and model ID for each selection.
 
+The menu is built dynamically from the local `opencode` CLI. For OpenCode Zen, it uses `opencode models opencode --verbose` and keeps only zero-cost models from the returned metadata. It also includes all currently available `opencode-go/*` and `openai/*` models, keeps static entries for `glm5-modal` and `nvidia-vl`, and warns if your saved current model is no longer available.
+
 Press Enter to keep the current selection.
 
 ---
@@ -112,19 +114,10 @@ switch-model.sh --help
 
 ## Available Models
 
-| Option | Model ID | Provider |
-|--------|----------|----------|
-| kimi-zen | opencode/kimi-k2.5-free | OpenCode Zen |
-| kimi-go | opencode-go/kimi-k2.5 | OpenCode Go |
-| glm5-modal | modal/zai-org/GLM-5-FP8 | Modal |
-| glm5-zen | opencode/glm-5-free | OpenCode Zen |
-| glm5-go | opencode-go/glm-5 | OpenCode Go |
-| minimax-zen | opencode/minimax-m2.5-free | OpenCode Zen |
-| minimax-go | opencode-go/minimax-m2.5 | OpenCode Go |
-| codex-5.3 | openai/gpt-5.3-codex | OpenAI |
-| gpt-5.4-thinking | openai/gpt-5.4-thinking | OpenAI |
-| gpt-5-nano | opencode/gpt-5-nano | OpenCode Zen |
-| nvidia-vl | openrouter/nvidia/nemotron-nano-12b-v2-vl:free | OpenRouter |
+- **Dynamic at runtime:** zero-cost `opencode/*` models from `opencode models opencode --verbose`, plus all currently available `opencode-go/*` and `openai/*` models from `opencode models <provider>`
+- **Always included:** `glm5-modal` (`modal/zai-org/GLM-5-FP8`) and `nvidia-vl` (`openrouter/nvidia/nemotron-nano-12b-v2-vl:free`)
+- **Intentionally excluded from menus:** `ollama-cloud/*` because the catalog is too large for a practical interactive selector
+- **Alias behavior:** existing aliases like `kimi-zen`, `glm5-go`, `codex-5.3`, and `gpt-5-nano` still work, and newly discovered models get derived aliases automatically
 
 ## Understanding the Two Selections
 
@@ -149,7 +142,7 @@ These agents handle coordination, communication, and delegation:
 - `unspecified-high` - High effort tasks
 - `visual-engineering` - UI/Frontend work
 
-**Recommended models:** kimi-zen, kimi-go, glm5-zen, glm5-go, minimax-zen, minimax-go
+**Recommended models:** whichever currently available `opencode/*` or `opencode-go/*` model best fits your quota and latency needs
 
 ---
 
@@ -165,7 +158,7 @@ These agents handle intensive coding tasks:
 - `ultrabrain` - Hard logic problems
 - `deep` - Thorough research
 
-**Recommended models:** codex-5.3, gpt-5.4-thinking (but you can use any model if quota runs out)
+**Recommended models:** whichever currently available `openai/*` model best fits your quota and depth needs
 
 > **Note:** Per OMO documentation, Hephaestus is designed exclusively for GPT/Codex models. However, if your Codex quota runs out, you can use kimi/glm/minimax as fallback.
 
