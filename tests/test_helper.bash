@@ -12,8 +12,12 @@ super_setup() {
     export FIXTURES_DIR
     export TEST_TMPDIR="${BATS_TEST_TMPDIR:-/tmp/bats-switch-model-$$}"
     mkdir -p "$TEST_TMPDIR"
+    export TEST_BIN_DIR="$TEST_TMPDIR/bin"
+    export OPENCODE_MOCK_DIR="$TEST_TMPDIR/opencode-mock"
+    mkdir -p "$TEST_BIN_DIR" "$OPENCODE_MOCK_DIR"
     export TEST_CONFIG="$TEST_TMPDIR/test-config.json"
     export CONFIG_FILE="$TEST_TMPDIR/oh-my-opencode.json"
+    export PATH="$TEST_BIN_DIR:$PATH"
     
     # Detect CI mode
     export CI_MODE="${CI:-false}"
@@ -25,11 +29,137 @@ super_setup() {
 # Load bats-core assertions
 setup() {
     super_setup
+    mock_opencode_cli
+    mock_default_opencode_models
 }
 
 teardown() {
     # Clean up test files
     rm -rf "$TEST_TMPDIR"
+}
+
+mock_opencode_cli() {
+    cat > "$TEST_BIN_DIR/opencode" << 'EOF'
+#!/bin/bash
+set -euo pipefail
+
+if [ "$#" -ge 2 ] && [ "$1" = "models" ]; then
+    provider="$2"
+    mock_dir="${OPENCODE_MOCK_DIR:?}"
+    suffix=""
+    if [ "$#" -ge 3 ] && [ "$3" = "--verbose" ]; then
+        suffix="-verbose"
+    fi
+    status_file="$mock_dir/models-${provider}${suffix}.status"
+    output_file="$mock_dir/models-${provider}${suffix}.txt"
+    stderr_file="$mock_dir/models-${provider}${suffix}.stderr"
+    status=0
+
+    if [ ! -f "$status_file" ] && [ -n "$suffix" ]; then
+        status_file="$mock_dir/models-${provider}.status"
+        output_file="$mock_dir/models-${provider}.txt"
+        stderr_file="$mock_dir/models-${provider}.stderr"
+    fi
+
+    if [ -f "$status_file" ]; then
+        status=$(cat "$status_file")
+    fi
+
+    if [ -f "$stderr_file" ]; then
+        cat "$stderr_file" >&2
+    fi
+
+    if [ -f "$output_file" ]; then
+        cat "$output_file"
+    fi
+
+    exit "$status"
+fi
+
+echo "Unsupported mock opencode command: $*" >&2
+exit 64
+EOF
+    chmod +x "$TEST_BIN_DIR/opencode"
+}
+
+set_mock_provider_models() {
+    local provider="$1"
+    local output_file="$OPENCODE_MOCK_DIR/models-${provider}.txt"
+    local status_file="$OPENCODE_MOCK_DIR/models-${provider}.status"
+    local stderr_file="$OPENCODE_MOCK_DIR/models-${provider}.stderr"
+
+    cat > "$output_file"
+    printf '0\n' > "$status_file"
+    : > "$stderr_file"
+}
+
+set_mock_provider_verbose_models() {
+    local provider="$1"
+    local output_file="$OPENCODE_MOCK_DIR/models-${provider}-verbose.txt"
+    local status_file="$OPENCODE_MOCK_DIR/models-${provider}-verbose.status"
+    local stderr_file="$OPENCODE_MOCK_DIR/models-${provider}-verbose.stderr"
+
+    cat > "$output_file"
+    printf '0\n' > "$status_file"
+    : > "$stderr_file"
+}
+
+set_mock_provider_failure() {
+    local provider="$1"
+    local message="${2:-Provider not available}"
+
+    : > "$OPENCODE_MOCK_DIR/models-${provider}.txt"
+    printf '1\n' > "$OPENCODE_MOCK_DIR/models-${provider}.status"
+    printf '%s\n' "$message" > "$OPENCODE_MOCK_DIR/models-${provider}.stderr"
+}
+
+mock_default_opencode_models() {
+    set_mock_provider_models opencode << 'EOF'
+opencode/kimi-k2.5-free
+opencode/glm-5-free
+opencode/minimax-m2.5-free
+opencode/gpt-5-nano
+opencode/big-pickle
+EOF
+
+    set_mock_provider_verbose_models opencode << 'EOF'
+opencode/kimi-k2.5-free
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/glm-5-free
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/minimax-m2.5-free
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/gpt-5-nano
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/big-pickle
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/claude-sonnet-4
+{
+  "cost": {"input": 3, "output": 15, "cache": {"read": 0.3, "write": 3.75}}
+}
+EOF
+
+    set_mock_provider_models opencode-go << 'EOF'
+opencode-go/kimi-k2.5
+opencode-go/glm-5
+opencode-go/minimax-m2.5
+EOF
+
+    set_mock_provider_models openai << 'EOF'
+openai/gpt-5.3-codex
+openai/gpt-5.4-thinking
+openai/gpt-5.4
+EOF
 }
 
 # Check if running in CI mode
@@ -42,11 +172,6 @@ skip_if_ci() {
     if is_ci_mode; then
         skip "Skipping interactive test in CI mode"
     fi
-}
-
-# Get a random valid model number (1-11)
-get_random_model_number() {
-    echo "$(( (RANDOM % 11) + 1 ))"
 }
 
 # Provide automated input for interactive mode

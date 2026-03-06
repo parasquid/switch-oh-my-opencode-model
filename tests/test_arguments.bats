@@ -29,6 +29,18 @@ load test_helper
     [[ "$output" == *"Deep Work: gpt-5.4-thinking"* ]]
 }
 
+@test "global mode: dynamic alias big-pickle succeeds" {
+    run bash "$SCRIPT_DIR/switch-model.sh" big-pickle codex-5.3
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Orchestration: big-pickle"* ]]
+}
+
+@test "global mode: raw provider model ID succeeds" {
+    run bash "$SCRIPT_DIR/switch-model.sh" "opencode/big-pickle" "openai/gpt-5.4"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Config updated!"* ]]
+}
+
 @test "global mode: only one arg shows error" {
     run bash "$SCRIPT_DIR/switch-model.sh" kimi-zen
     [ "$status" -ne 0 ]
@@ -233,4 +245,63 @@ load test_helper
     [ "$status" -eq 0 ]
     # Should show prompts or update messages
     [[ "$output" == *"Orchestration Model"* ]] || [[ "$output" == *"Updated"* ]]
+}
+
+@test "interactive: warns when current model is unavailable" {
+    cat > "$CONFIG_FILE" << 'EOF'
+{
+  "agents": {
+    "sisyphus": {"model": "opencode/kimi-k2.5-free"},
+    "oracle": {"model": "opencode/kimi-k2.5-free"},
+    "explore": {"model": "opencode/kimi-k2.5-free"},
+    "prometheus": {"model": "opencode/kimi-k2.5-free"},
+    "metis": {"model": "opencode/kimi-k2.5-free"},
+    "momus": {"model": "opencode/kimi-k2.5-free"},
+    "atlas": {"model": "opencode/kimi-k2.5-free"},
+    "hephaestus": {"model": "openai/gpt-5.3-codex"},
+    "librarian": {"model": "opencode/gpt-5-nano"},
+    "multimodal-looker": {"model": "openrouter/nvidia/nemotron-nano-12b-v2-vl:free"}
+  },
+  "categories": {
+    "ultrabrain": {"model": "openai/gpt-5.3-codex"},
+    "deep": {"model": "openai/gpt-5.3-codex"},
+    "artistry": {"model": "opencode/kimi-k2.5-free"},
+    "quick": {"model": "opencode/kimi-k2.5-free"},
+    "writing": {"model": "opencode/kimi-k2.5-free"},
+    "unspecified-low": {"model": "opencode/kimi-k2.5-free"},
+    "unspecified-high": {"model": "opencode/kimi-k2.5-free"},
+    "visual-engineering": {"model": "opencode/kimi-k2.5-free"}
+  }
+}
+EOF
+
+    set_mock_provider_models opencode << 'EOF'
+opencode/glm-5-free
+opencode/minimax-m2.5-free
+opencode/gpt-5-nano
+opencode/big-pickle
+EOF
+
+    set_mock_provider_verbose_models opencode << 'EOF'
+opencode/glm-5-free
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/minimax-m2.5-free
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/gpt-5-nano
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+opencode/big-pickle
+{
+  "cost": {"input": 0, "output": 0, "cache": {"read": 0, "write": 0}}
+}
+EOF
+
+    run bash -c "printf '1\n8\n' | $SCRIPT_DIR/switch-model.sh"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"now unavailable"* ]]
 }

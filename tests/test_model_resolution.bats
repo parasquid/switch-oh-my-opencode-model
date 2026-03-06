@@ -6,13 +6,13 @@
 # Load test helpers
 load test_helper
 
-# Load the switch-model.sh functions (need to handle the config check)
-# We create a wrapper that sources functions but skips config check
-
 setup() {
     super_setup
-    # Source the actual script functions
-    source "$FIXTURES_DIR/functions.sh"
+    mock_opencode_cli
+    mock_default_opencode_models
+    export CONFIG_FILE="$TEST_CONFIG"
+    source "$SCRIPT_DIR/switch-model.sh"
+    build_model_catalog
 }
 
 # =============================================================================
@@ -99,6 +99,21 @@ setup() {
     [[ "$result" == "opencode/gpt-5-nano" ]]
 }
 
+@test "resolve_model: big-pickle resolves correctly" {
+    result=$(resolve_model "big-pickle")
+    [[ "$result" == "opencode/big-pickle" ]]
+}
+
+@test "resolve_model: paid opencode models are filtered out" {
+    result=$(resolve_model "claude-sonnet-4")
+    [[ "$result" == "" ]]
+}
+
+@test "resolve_model: raw available model ID resolves correctly" {
+    result=$(resolve_model "openai/gpt-5.4")
+    [[ "$result" == "openai/gpt-5.4" ]]
+}
+
 @test "resolve_model: nvidia-vl resolves correctly" {
     result=$(resolve_model "nvidia-vl")
     [[ "$result" == "openrouter/nvidia/nemotron-nano-12b-v2-vl:free" ]]
@@ -168,6 +183,11 @@ setup() {
     [[ "$result" == "gpt-5-nano" ]]
 }
 
+@test "get_model_name: opencode/big-pickle maps to big-pickle" {
+    result=$(get_model_name "opencode/big-pickle")
+    [[ "$result" == "big-pickle" ]]
+}
+
 @test "get_model_name: openrouter/nvidia/nemotron-nano-12b-v2-vl:free maps to nvidia-vl" {
     result=$(get_model_name "openrouter/nvidia/nemotron-nano-12b-v2-vl:free")
     [[ "$result" == "nvidia-vl" ]]
@@ -179,62 +199,12 @@ setup() {
 }
 
 # =============================================================================
-# Test get_model_by_number() function
+# Test menu ordering helpers
 # =============================================================================
 
-@test "get_model_by_number: 1 returns kimi-zen" {
-    result=$(get_model_by_number "1")
-    [[ "$result" == "opencode/kimi-k2.5-free" ]]
-}
-
-@test "get_model_by_number: 2 returns kimi-go" {
-    result=$(get_model_by_number "2")
-    [[ "$result" == "opencode-go/kimi-k2.5" ]]
-}
-
-@test "get_model_by_number: 3 returns glm5-modal" {
-    result=$(get_model_by_number "3")
-    [[ "$result" == "modal/zai-org/GLM-5-FP8" ]]
-}
-
-@test "get_model_by_number: 4 returns glm5-zen" {
-    result=$(get_model_by_number "4")
-    [[ "$result" == "opencode/glm-5-free" ]]
-}
-
-@test "get_model_by_number: 5 returns glm5-go" {
-    result=$(get_model_by_number "5")
-    [[ "$result" == "opencode-go/glm-5" ]]
-}
-
-@test "get_model_by_number: 6 returns minimax-zen" {
-    result=$(get_model_by_number "6")
-    [[ "$result" == "opencode/minimax-m2.5-free" ]]
-}
-
-@test "get_model_by_number: 7 returns minimax-go" {
-    result=$(get_model_by_number "7")
-    [[ "$result" == "opencode-go/minimax-m2.5" ]]
-}
-
-@test "get_model_by_number: 8 returns codex-5.3" {
+@test "get_model_by_number: valid selection returns matching menu entry" {
     result=$(get_model_by_number "8")
-    [[ "$result" == "openai/gpt-5.3-codex" ]]
-}
-
-@test "get_model_by_number: 9 returns gpt-5.4-thinking" {
-    result=$(get_model_by_number "9")
-    [[ "$result" == "openai/gpt-5.4-thinking" ]]
-}
-
-@test "get_model_by_number: 10 returns gpt-5-nano" {
-    result=$(get_model_by_number "10")
-    [[ "$result" == "opencode/gpt-5-nano" ]]
-}
-
-@test "get_model_by_number: 11 returns nvidia-vl" {
-    result=$(get_model_by_number "11")
-    [[ "$result" == "openrouter/nvidia/nemotron-nano-12b-v2-vl:free" ]]
+    [[ "$result" == "${MODEL_MENU_IDS[7]}" ]]
 }
 
 @test "get_model_by_number: 0 returns empty (invalid)" {
@@ -242,12 +212,30 @@ setup() {
     [[ "$result" == "" ]]
 }
 
-@test "get_model_by_number: 12 returns empty (invalid)" {
-    result=$(get_model_by_number "12")
+@test "get_model_by_number: out of range returns empty (invalid)" {
+    result=$(get_model_by_number "14")
     [[ "$result" == "" ]]
 }
 
 @test "get_model_by_number: abc returns empty (invalid)" {
     result=$(get_model_by_number "abc")
     [[ "$result" == "" ]]
+}
+
+@test "build_model_catalog: failing provider is omitted" {
+    set_mock_provider_failure opencode-go "Provider not connected"
+    build_model_catalog
+
+    result=$(resolve_model "kimi-go")
+    [[ "$result" == "" ]]
+    [[ "${#MODEL_MENU_IDS[@]}" -ge 1 ]]
+}
+
+@test "build_model_catalog: verbose cost filter keeps only zero-cost opencode models" {
+    build_model_catalog
+
+    result=$(resolve_model "claude-sonnet-4")
+    [[ "$result" == "" ]]
+    result=$(resolve_model "gpt-5-nano")
+    [[ "$result" == "opencode/gpt-5-nano" ]]
 }

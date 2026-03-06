@@ -9,6 +9,8 @@ load test_helper
 # Setup - create test config and export required paths
 setup() {
     super_setup
+    mock_opencode_cli
+    mock_default_opencode_models
     
     # Override CONFIG_FILE to use our test config
     export CONFIG_FILE="$TEST_CONFIG"
