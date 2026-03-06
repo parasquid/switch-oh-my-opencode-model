@@ -13,6 +13,7 @@
 #   minimax-zen        - opencode/minimax-m2.5-free
 #   minimax-go         - opencode-go/minimax-m2.5
 #   codex-5.3          - openai/gpt-5.3-codex
+#   gpt-5.4-thinking   - openai/gpt-5.4-thinking
 #   gpt-5-nano         - opencode/gpt-5-nano
 #   nvidia-vl          - openrouter/nvidia/nemotron-nano-12b-v2-vl:free
 #
@@ -120,6 +121,7 @@ GLM5_GO="opencode-go/glm-5"
 MINIMAX_ZEN="opencode/minimax-m2.5-free"
 MINIMAX_GO="opencode-go/minimax-m2.5"
 CODEX_53="openai/gpt-5.3-codex"
+GPT_54_THINKING="openai/gpt-5.4-thinking"
 GPT_NANO="opencode/gpt-5-nano"
 NVIDIA_VL="openrouter/nvidia/nemotron-nano-12b-v2-vl:free"
 
@@ -166,7 +168,8 @@ AVAILABLE CATEGORIES: $VALID_CATEGORIES
 
 AVAILABLE MODELS:
   kimi-zen, kimi-go, glm5-modal, glm5-zen, glm5-go,
-  minimax-zen, minimax-go, codex-5.3, gpt-5-nano, nvidia-vl
+  minimax-zen, minimax-go, codex-5.3, gpt-5.4-thinking,
+  gpt-5-nano, nvidia-vl
 
 NOTE: In global mode, librarian and multimodal-looker are EXCLUDED (keep defaults).
       Use fine-grained mode to modify them.
@@ -183,6 +186,7 @@ resolve_model() {
         minimax-zen|minimax|minimax-m2.5|minimax-m2.5-free) echo "$MINIMAX_ZEN" ;;
         minimax-go|minimax-m2.5-go)                  echo "$MINIMAX_GO" ;;
         codex-5.3|codex|gpt-5.3-codex)              echo "$CODEX_53" ;;
+        gpt-5.4-thinking|gpt-5.4|gpt-5.4-think)     echo "$GPT_54_THINKING" ;;
         gpt-5-nano|gpt-nano|nano)                   echo "$GPT_NANO" ;;
         nvidia-vl|nvidia|nemotron)                   echo "$NVIDIA_VL" ;;
         *) echo "" ;;
@@ -199,6 +203,7 @@ get_model_name() {
         "$MINIMAX_ZEN") echo "minimax-zen" ;;
         "$MINIMAX_GO") echo "minimax-go" ;;
         "$CODEX_53") echo "codex-5.3" ;;
+        "$GPT_54_THINKING") echo "gpt-5.4-thinking" ;;
         "$GPT_NANO") echo "gpt-5-nano" ;;
         "$NVIDIA_VL") echo "nvidia-vl" ;;
         *) echo "$1" ;;
@@ -206,16 +211,17 @@ get_model_name() {
 }
 
 print_model_menu() {
-    echo "  1) kimi-zen        - $KIMI_ZEN"
-    echo "  2) kimi-go         - $KIMI_GO"
-    echo "  3) glm5-modal      - $GLM5_MODAL"
-    echo "  4) glm5-zen        - $GLM5_ZEN"
-    echo "  5) glm5-go         - $GLM5_GO"
-    echo "  6) minimax-zen     - $MINIMAX_ZEN"
-    echo "  7) minimax-go      - $MINIMAX_GO"
-    echo "  8) codex-5.3       - $CODEX_53"
-    echo "  9) gpt-5-nano      - $GPT_NANO"
-    echo " 10) nvidia-vl       - $NVIDIA_VL"
+    echo "  1) kimi-zen           - $KIMI_ZEN"
+    echo "  2) kimi-go            - $KIMI_GO"
+    echo "  3) glm5-modal         - $GLM5_MODAL"
+    echo "  4) glm5-zen           - $GLM5_ZEN"
+    echo "  5) glm5-go            - $GLM5_GO"
+    echo "  6) minimax-zen        - $MINIMAX_ZEN"
+    echo "  7) minimax-go         - $MINIMAX_GO"
+    echo "  8) codex-5.3          - $CODEX_53"
+    echo "  9) gpt-5.4-thinking   - $GPT_54_THINKING"
+    echo " 10) gpt-5-nano         - $GPT_NANO"
+    echo " 11) nvidia-vl          - $NVIDIA_VL"
 }
 
 get_model_by_number() {
@@ -228,8 +234,9 @@ get_model_by_number() {
         6) echo "$MINIMAX_ZEN" ;;
         7) echo "$MINIMAX_GO" ;;
         8) echo "$CODEX_53" ;;
-        9) echo "$GPT_NANO" ;;
-       10) echo "$NVIDIA_VL" ;;
+        9) echo "$GPT_54_THINKING" ;;
+       10) echo "$GPT_NANO" ;;
+       11) echo "$NVIDIA_VL" ;;
         *) echo "" ;;
     esac
 }
@@ -262,11 +269,19 @@ if [[ "$1" == "--"* ]]; then
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --agent)
+                if [ $# -lt 2 ]; then
+                    echo "Error: --agent requires <name>"
+                    exit 1
+                fi
                 MODE="agent"
                 AGENT_NAME="$2"
                 shift 2
                 ;;
             --category)
+                if [ $# -lt 2 ]; then
+                    echo "Error: --category requires <name>"
+                    exit 1
+                fi
                 MODE="category"
                 CATEGORY_NAME="$2"
                 shift 2
@@ -280,6 +295,10 @@ if [[ "$1" == "--"* ]]; then
                 shift
                 ;;
             --fallback)
+                if [ $# -lt 2 ]; then
+                    echo "Error: --fallback requires <model>"
+                    exit 1
+                fi
                 FALLBACK_MODEL="$2"
                 shift 2
                 ;;
@@ -361,7 +380,7 @@ with open('$CONFIG_FILE') as f:
         echo ""
         print_model_menu
         echo ""
-        echo -n "Select orchestration model (1-10) [default: current]: "
+        echo -n "Select orchestration model (1-11) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -389,7 +408,7 @@ with open('$CONFIG_FILE') as f:
         echo ""
         print_model_menu
         echo ""
-        echo -n "Select deep work model (1-10) [default: current]: "
+        echo -n "Select deep work model (1-11) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -481,7 +500,7 @@ with open('$CONFIG_FILE') as f:
         echo "Current: $current"
         print_model_menu
         echo ""
-        echo -n "Select model (1-10) [default: current]: "
+        echo -n "Select model (1-11) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -495,9 +514,13 @@ with open('$CONFIG_FILE') as f:
         # Fallback
         if [ -n "$FALLBACK_MODEL" ]; then
             FALLBACK=$(resolve_model "$FALLBACK_MODEL")
+            if [ -z "$FALLBACK" ]; then
+                echo "Error: Unknown model '$FALLBACK_MODEL'"
+                exit 1
+            fi
         else
             echo ""
-            echo -n "Set fallback model? (1-10) or enter to skip: "
+            echo -n "Set fallback model? (1-11) or enter to skip: "
             read -r fb_choice
             if [ -n "$fb_choice" ]; then
                 FALLBACK=$(get_model_by_number "$fb_choice")
@@ -512,6 +535,10 @@ with open('$CONFIG_FILE') as f:
         fi
         if [ -n "$FALLBACK_MODEL" ]; then
             FALLBACK=$(resolve_model "$FALLBACK_MODEL")
+            if [ -z "$FALLBACK" ]; then
+                echo "Error: Unknown model '$FALLBACK_MODEL'"
+                exit 1
+            fi
         fi
     fi
     
@@ -522,15 +549,18 @@ import json
 with open('$CONFIG_FILE', 'r') as f:
     config = json.load(f)
 
+fallback = '$FALLBACK'
 config['agents']['$AGENT_NAME']['model'] = '$SELECTED_MODEL'
-$([ -n "$FALLBACK" ] && echo "config['agents']['$AGENT_NAME']['fallback'] = '$FALLBACK'")
+if fallback:
+    config['agents']['$AGENT_NAME']['fallback'] = fallback
 
 with open('$CONFIG_FILE', 'w') as f:
     json.dump(config, f, indent=2)
     f.write('\n')
 
 print("Updated agent: $AGENT_NAME -> $SELECTED_NAME")
-$([ -n "$FALLBACK" ] && echo "Fallback: $FALLBACK")
+if fallback:
+    print(f"Fallback: {fallback}")
 PYTHON
 
     echo "Restart OpenCode to apply changes."
@@ -556,7 +586,7 @@ with open('$CONFIG_FILE') as f:
         echo "Current: $current"
         print_model_menu
         echo ""
-        echo -n "Select model (1-10) [default: current]: "
+        echo -n "Select model (1-11) [default: current]: "
         read -r choice
         
         if [ -n "$choice" ]; then
@@ -570,9 +600,13 @@ with open('$CONFIG_FILE') as f:
         # Fallback
         if [ -n "$FALLBACK_MODEL" ]; then
             FALLBACK=$(resolve_model "$FALLBACK_MODEL")
+            if [ -z "$FALLBACK" ]; then
+                echo "Error: Unknown model '$FALLBACK_MODEL'"
+                exit 1
+            fi
         else
             echo ""
-            echo -n "Set fallback model? (1-10) or enter to skip: "
+            echo -n "Set fallback model? (1-11) or enter to skip: "
             read -r fb_choice
             if [ -n "$fb_choice" ]; then
                 FALLBACK=$(get_model_by_number "$fb_choice")
@@ -587,6 +621,10 @@ with open('$CONFIG_FILE') as f:
         fi
         if [ -n "$FALLBACK_MODEL" ]; then
             FALLBACK=$(resolve_model "$FALLBACK_MODEL")
+            if [ -z "$FALLBACK" ]; then
+                echo "Error: Unknown model '$FALLBACK_MODEL'"
+                exit 1
+            fi
         fi
     fi
     
@@ -597,15 +635,18 @@ import json
 with open('$CONFIG_FILE', 'r') as f:
     config = json.load(f)
 
+fallback = '$FALLBACK'
 config['categories']['$CATEGORY_NAME']['model'] = '$SELECTED_MODEL'
-$([ -n "$FALLBACK" ] && echo "config['categories']['$CATEGORY_NAME']['fallback'] = '$FALLBACK'")
+if fallback:
+    config['categories']['$CATEGORY_NAME']['fallback'] = fallback
 
 with open('$CONFIG_FILE', 'w') as f:
     json.dump(config, f, indent=2)
     f.write('\n')
 
 print("Updated category: $CATEGORY_NAME -> $SELECTED_NAME")
-$([ -n "$FALLBACK" ] && echo "Fallback: $FALLBACK")
+if fallback:
+    print(f"Fallback: {fallback}")
 PYTHON
 
     echo "Restart OpenCode to apply changes."
@@ -621,6 +662,10 @@ if [ "$MODE" = "agents-fallback" ]; then
         FALLBACK=$(get_model_by_number "$choice")
     else
         FALLBACK=$(resolve_model "$MODEL_ARG")
+        if [ -z "$FALLBACK" ]; then
+            echo "Error: Unknown model '$MODEL_ARG'"
+            exit 1
+        fi
     fi
     
     cp "$CONFIG_FILE" "$CONFIG_FILE.bak.$(date +%Y%m%d_%H%M%S)"
@@ -654,6 +699,10 @@ if [ "$MODE" = "categories-fallback" ]; then
         FALLBACK=$(get_model_by_number "$choice")
     else
         FALLBACK=$(resolve_model "$MODEL_ARG")
+        if [ -z "$FALLBACK" ]; then
+            echo "Error: Unknown model '$MODEL_ARG'"
+            exit 1
+        fi
     fi
     
     cp "$CONFIG_FILE" "$CONFIG_FILE.bak.$(date +%Y%m%d_%H%M%S)"

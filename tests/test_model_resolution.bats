@@ -84,6 +84,16 @@ setup() {
     [[ "$result" == "openai/gpt-5.3-codex" ]]
 }
 
+@test "resolve_model: gpt-5.4-thinking resolves correctly" {
+    result=$(resolve_model "gpt-5.4-thinking")
+    [[ "$result" == "openai/gpt-5.4-thinking" ]]
+}
+
+@test "resolve_model: gpt-5.4 alias resolves correctly" {
+    result=$(resolve_model "gpt-5.4")
+    [[ "$result" == "openai/gpt-5.4-thinking" ]]
+}
+
 @test "resolve_model: gpt-5-nano resolves correctly" {
     result=$(resolve_model "gpt-5-nano")
     [[ "$result" == "opencode/gpt-5-nano" ]]
@@ -148,6 +158,11 @@ setup() {
     [[ "$result" == "codex-5.3" ]]
 }
 
+@test "get_model_name: openai/gpt-5.4-thinking maps to gpt-5.4-thinking" {
+    result=$(get_model_name "openai/gpt-5.4-thinking")
+    [[ "$result" == "gpt-5.4-thinking" ]]
+}
+
 @test "get_model_name: opencode/gpt-5-nano maps to gpt-5-nano" {
     result=$(get_model_name "opencode/gpt-5-nano")
     [[ "$result" == "gpt-5-nano" ]]
@@ -207,13 +222,18 @@ setup() {
     [[ "$result" == "openai/gpt-5.3-codex" ]]
 }
 
-@test "get_model_by_number: 9 returns gpt-5-nano" {
+@test "get_model_by_number: 9 returns gpt-5.4-thinking" {
     result=$(get_model_by_number "9")
+    [[ "$result" == "openai/gpt-5.4-thinking" ]]
+}
+
+@test "get_model_by_number: 10 returns gpt-5-nano" {
+    result=$(get_model_by_number "10")
     [[ "$result" == "opencode/gpt-5-nano" ]]
 }
 
-@test "get_model_by_number: 10 returns nvidia-vl" {
-    result=$(get_model_by_number "10")
+@test "get_model_by_number: 11 returns nvidia-vl" {
+    result=$(get_model_by_number "11")
     [[ "$result" == "openrouter/nvidia/nemotron-nano-12b-v2-vl:free" ]]
 }
 
@@ -222,8 +242,8 @@ setup() {
     [[ "$result" == "" ]]
 }
 
-@test "get_model_by_number: 11 returns empty (invalid)" {
-    result=$(get_model_by_number "11")
+@test "get_model_by_number: 12 returns empty (invalid)" {
+    result=$(get_model_by_number "12")
     [[ "$result" == "" ]]
 }
 

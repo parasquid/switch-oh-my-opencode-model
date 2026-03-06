@@ -12,6 +12,7 @@ GLM5_GO="opencode-go/glm-5"
 MINIMAX_ZEN="opencode/minimax-m2.5-free"
 MINIMAX_GO="opencode-go/minimax-m2.5"
 CODEX_53="openai/gpt-5.3-codex"
+GPT_54_THINKING="openai/gpt-5.4-thinking"
 GPT_NANO="opencode/gpt-5-nano"
 NVIDIA_VL="openrouter/nvidia/nemotron-nano-12b-v2-vl:free"
 
@@ -25,6 +26,7 @@ resolve_model() {
         minimax-zen|minimax|minimax-m2.5|minimax-m2.5-free) echo "$MINIMAX_ZEN" ;;
         minimax-go|minimax-m2.5-go)                  echo "$MINIMAX_GO" ;;
         codex-5.3|codex|gpt-5.3-codex)              echo "$CODEX_53" ;;
+        gpt-5.4-thinking|gpt-5.4|gpt-5.4-think)     echo "$GPT_54_THINKING" ;;
         gpt-5-nano|gpt-nano|nano)                   echo "$GPT_NANO" ;;
         nvidia-vl|nvidia|nemotron)                   echo "$NVIDIA_VL" ;;
         *) echo "" ;;
@@ -41,6 +43,7 @@ get_model_name() {
         "$MINIMAX_ZEN") echo "minimax-zen" ;;
         "$MINIMAX_GO") echo "minimax-go" ;;
         "$CODEX_53") echo "codex-5.3" ;;
+        "$GPT_54_THINKING") echo "gpt-5.4-thinking" ;;
         "$GPT_NANO") echo "gpt-5-nano" ;;
         "$NVIDIA_VL") echo "nvidia-vl" ;;
         *) echo "$1" ;;
@@ -48,16 +51,17 @@ get_model_name() {
 }
 
 print_model_menu() {
-    echo "  1) kimi-zen        - $KIMI_ZEN"
-    echo "  2) kimi-go         - $KIMI_GO"
-    echo "  3) glm5-modal      - $GLM5_MODAL"
-    echo "  4) glm5-zen        - $GLM5_ZEN"
-    echo "  5) glm5-go         - $GLM5_GO"
-    echo "  6) minimax-zen     - $MINIMAX_ZEN"
-    echo "  7) minimax-go      - $MINIMAX_GO"
-    echo "  8) codex-5.3       - $CODEX_53"
-    echo "  9) gpt-5-nano      - $GPT_NANO"
-    echo " 10) nvidia-vl       - $NVIDIA_VL"
+    echo "  1) kimi-zen           - $KIMI_ZEN"
+    echo "  2) kimi-go            - $KIMI_GO"
+    echo "  3) glm5-modal         - $GLM5_MODAL"
+    echo "  4) glm5-zen           - $GLM5_ZEN"
+    echo "  5) glm5-go            - $GLM5_GO"
+    echo "  6) minimax-zen        - $MINIMAX_ZEN"
+    echo "  7) minimax-go         - $MINIMAX_GO"
+    echo "  8) codex-5.3          - $CODEX_53"
+    echo "  9) gpt-5.4-thinking   - $GPT_54_THINKING"
+    echo " 10) gpt-5-nano         - $GPT_NANO"
+    echo " 11) nvidia-vl          - $NVIDIA_VL"
 }
 
 get_model_by_number() {
@@ -70,8 +74,9 @@ get_model_by_number() {
         6) echo "$MINIMAX_ZEN" ;;
         7) echo "$MINIMAX_GO" ;;
         8) echo "$CODEX_53" ;;
-        9) echo "$GPT_NANO" ;;
-        10) echo "$NVIDIA_VL" ;;
+        9) echo "$GPT_54_THINKING" ;;
+        10) echo "$GPT_NANO" ;;
+        11) echo "$NVIDIA_VL" ;;
         *) echo "" ;;
     esac
 }

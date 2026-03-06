@@ -44,9 +44,9 @@ skip_if_ci() {
     fi
 }
 
-# Get a random valid model number (1-10)
+# Get a random valid model number (1-11)
 get_random_model_number() {
-    echo "$(( (RANDOM % 10) + 1 ))"
+    echo "$(( (RANDOM % 11) + 1 ))"
 }
 
 # Provide automated input for interactive mode
@@ -58,7 +58,7 @@ auto_input() {
     if [ -n "$fallback_num" ]; then
         echo -e "${model_num}\n${fallback_num}"
     else
-        echo "${model_num}"
+        echo -e "${model_num}\n"
     fi
 }
 

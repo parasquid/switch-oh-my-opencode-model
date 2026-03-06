@@ -13,13 +13,20 @@ load test_helper
 @test "global mode: valid two args succeeds" {
     run bash "$SCRIPT_DIR/switch-model.sh" kimi-zen codex-5.3
     [ "$status" -eq 0 ]
-    [[ "$output" == *"Updated"* ]]
+    [[ "$output" == *"Config updated!"* ]]
 }
 
 @test "global mode: glm5-go codex-5.3 succeeds" {
     run bash "$SCRIPT_DIR/switch-model.sh" glm5-go codex-5.3
     [ "$status" -eq 0 ]
-    [[ "$output" == *"Updated"* ]]
+    [[ "$output" == *"Config updated!"* ]]
+}
+
+@test "global mode: kimi-zen gpt-5.4-thinking succeeds" {
+    run bash "$SCRIPT_DIR/switch-model.sh" kimi-zen gpt-5.4-thinking
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Config updated!"* ]]
+    [[ "$output" == *"Deep Work: gpt-5.4-thinking"* ]]
 }
 
 @test "global mode: only one arg shows error" {
@@ -56,6 +63,12 @@ load test_helper
     [[ "$output" == *"Updated agent: hephaestus -> codex-5.3"* ]]
 }
 
+@test "agent mode: --agent hephaestus gpt-5.4-thinking succeeds" {
+    run bash "$SCRIPT_DIR/switch-model.sh" --agent hephaestus gpt-5.4-thinking
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"Updated agent: hephaestus -> gpt-5.4-thinking"* ]]
+}
+
 @test "agent mode: invalid agent shows error Invalid agent" {
     run bash "$SCRIPT_DIR/switch-model.sh" --agent invalid-agent kimi-zen
     [ "$status" -ne 0 ]
@@ -69,7 +82,7 @@ load test_helper
         run bash -c "auto_input 5 | $SCRIPT_DIR/switch-model.sh --agent sisyphus"
     else
         # Mock the read by providing input via pipe
-        run bash -c "echo '1' | $SCRIPT_DIR/switch-model.sh --agent sisyphus"
+        run bash -c "printf '1\n\n' | $SCRIPT_DIR/switch-model.sh --agent sisyphus"
     fi
     [ "$status" -eq 0 ]
     # Should show interactive prompt or update message
@@ -117,7 +130,7 @@ load test_helper
         run bash -c "auto_input 3 | $SCRIPT_DIR/switch-model.sh --category quick"
     else
         # Mock the read by providing input via pipe
-        run bash -c "echo '1' | $SCRIPT_DIR/switch-model.sh --category quick"
+        run bash -c "printf '1\n\n' | $SCRIPT_DIR/switch-model.sh --category quick"
     fi
     [ "$status" -eq 0 ]
     # Should show interactive prompt or update message

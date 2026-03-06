@@ -122,6 +122,7 @@ switch-model.sh --help
 | minimax-zen | opencode/minimax-m2.5-free | OpenCode Zen |
 | minimax-go | opencode-go/minimax-m2.5 | OpenCode Go |
 | codex-5.3 | openai/gpt-5.3-codex | OpenAI |
+| gpt-5.4-thinking | openai/gpt-5.4-thinking | OpenAI |
 | gpt-5-nano | opencode/gpt-5-nano | OpenCode Zen |
 | nvidia-vl | openrouter/nvidia/nemotron-nano-12b-v2-vl:free | OpenRouter |
 
@@ -164,7 +165,7 @@ These agents handle intensive coding tasks:
 - `ultrabrain` - Hard logic problems
 - `deep` - Thorough research
 
-**Recommended model:** codex-5.3 (but you can use any model if quota runs out)
+**Recommended models:** codex-5.3, gpt-5.4-thinking (but you can use any model if quota runs out)
 
 > **Note:** Per OMO documentation, Hephaestus is designed exclusively for GPT/Codex models. However, if your Codex quota runs out, you can use kimi/glm/minimax as fallback.
 
@@ -233,7 +234,7 @@ bats -v tests/
 
 ### Test Coverage
 
-- **Model Resolution**: 41 tests for all 10 models and aliases
+- **Model Resolution**: 45 tests for all 11 models and aliases
 - **Argument Parsing**: 26 tests for CLI arguments and modes
 - **Config Operations**: 15 tests for backup and modifications
 
